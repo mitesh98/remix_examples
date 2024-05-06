@@ -95,6 +95,58 @@ export async function getUser(request: Request) {
 
   return user;
 }
+export async function getUsers(request:any) {
+  const page=request?.page
+  const pageSize=request?.pageSize
+  const searchText=request?.searchText
+  const skip = page * pageSize||0;
+  // Fetch Users List
+  const queryOptions: any = {
+    skip,
+    take: pageSize,
+  };
+  if (searchText) {  
+    queryOptions.where = {
+      username: {
+        contains: searchText,
+      },
+    };
+  }
+  const users = await db.user.findMany(queryOptions);
+
+  // Count of users 
+  const countQueryOptions: any = {};
+  if (searchText) {  
+    countQueryOptions.where = {
+      username: {
+        contains: searchText,
+      },
+    };
+  }
+
+  const countUsers=await db.user.count(countQueryOptions)
+  return {data:users,total:countUsers};
+}
+export async function getJokesByUserId(request:any){
+  const page=request?.page||0
+  const pageSize=request?.pageSize||10
+  const skip = page * pageSize||0;
+  const userId=request?.userId
+  //Count Jokes by User
+  const jokeListCount = await db.joke.count({
+    where: { jokesterId: userId }
+  });
+  //Fetch Jokes
+  const jokeListItems = await db.joke.findMany({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, name: true,content:true },
+      take: pageSize,
+      skip,
+      where: { jokesterId: userId },
+    });
+   
+  return {data:jokeListItems,total:jokeListCount};
+}
 
 export async function logout(request: Request) {
   const session = await getUserSession(request);

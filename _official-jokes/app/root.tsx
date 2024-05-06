@@ -13,6 +13,7 @@ import type { PropsWithChildren } from "react";
 import globalLargeStylesUrl from "~/styles/global-large.css";
 import globalMediumStylesUrl from "~/styles/global-medium.css";
 import globalStylesUrl from "~/styles/global.css";
+import styles from "./tailwind.css?url"; // adding tailwind classes 
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: globalStylesUrl },
@@ -26,6 +27,7 @@ export const links: LinksFunction = () => [
     href: globalLargeStylesUrl,
     media: "screen and (min-width: 1024px)",
   },
+  { rel: "stylesheet", href: styles },
 ];
 
 export const meta: V2_MetaFunction = () => {
